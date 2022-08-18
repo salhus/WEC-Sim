@@ -53,9 +53,9 @@ classdef waveClass<handle
             'numPointsY',   50 );                   % (`structure`) Defines visualization options, structure contains the fields ``numPointsX`` for the number of visualization points in x direction, and ``numPointsY`` for the number of visualization points in y direction. 
         waterDepth      = [];                       % (`float`) Water depth [m]. Default to BEM water depth if not set. 
         spread          = 1;                        % (`float`) Wave Spread probability associated with wave direction(s). Should be defined as a column vector for more than one wave direction. Default = ``1``
-    end    
-  
-    properties (SetAccess = 'private', GetAccess = 'public')%internal       
+%     end    
+%   
+%     properties (SetAccess = 'private', GetAccess = 'public')%internal       
         % The following properties are private, for internal use by WEC-Sim
         amplitude       = [];                       % Wave amplitude [m]. For regular waves or 2*(wave spectrum vector) for irregular waves
         deepWater       = [];                       % Deep water or not, depending on input from WAMIT, NEMOH and AQWA
@@ -500,9 +500,9 @@ classdef waveClass<handle
             ylabel('Spectrum (m^2-s/rad)');
         end
     
-    end
-    
-    methods (Access = 'protected')
+%     end
+%     
+%     methods (Access = 'protected')
         function setWavePhase(obj)
             % Sets the irregular wave's random phase
             % used by: :meth:`waveClass.setup`.

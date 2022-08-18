@@ -10,13 +10,44 @@ simu.solver = 'ode4';                   % simu.solver = 'ode4' for fixed step & 
 simu.dt = 0.1; 							% Simulation time-step [s]
 
 %% Wave Information 
-% % noWaveCIC, no waves with radiation CIC  
-% waves = waveClass('noWaveCIC');       % Initialize Wave Class and Specify Type  
 
-% Regular Waves  
-waves = waveClass('regular');           % Initialize Wave Class and Specify Type                                 
-waves.height = 2.5;                     % Wave Height [m]
-waves.period = 8;                       % Wave Period [s]
+
+bemFreq = 0.02:0.02:5.2;
+bemWaterDepth = 100;
+
+% % % noWaveCIC, no waves with radiation CIC  
+% % waves = waveClass('noWaveCIC');       % Initialize Wave Class and Specify Type  
+% 
+% % Regular Waves  
+waves1 = waveClass('regular');           % Initialize Wave Class and Specify Type                                 
+waves1.height = 2.0;                     % Wave Height [m]
+waves1.period = 1;                       % Wave Period [s]
+
+waveGen(waves1,simu,bemFreq,bemWaterDepth) 
+w1 = waves1.waveAmpTime;
+
+
+waves2 = waveClass('irregular');           % Initialize Wave Class and Specify Type                                 
+waves2.height = 1;                     % Wave Height [m]
+waves2.period = 2;                       % Wave Period [s]
+waves2.spectrumType = 'PM';
+
+
+waveGen(waves2,simu,bemFreq,bemWaterDepth) 
+w2 = waves2.waveAmpTime;
+
+SwellandChop(:,1) = w1(:,1); SwellandChop(:,2) = w1(:,2) + w2(:,2);
+
+save('SwellandChop.mat','SwellandChop')
+clear('SwellandChop',"w1","w2")
+
+waves = waveClass('spectrumImport');           % Initialize Wave Class and Specify Type                                 
+waves.spectrumFile ='SwellandChop.mat';
+load(waves.spectrumFile);
+
+waveElevUser(waves,simu.rampTime,length(simu.time)-1,SwellandChop,simu.time)
+
+
 
 % % Regular Waves with CIC
 % waves = waveClass('regularCIC');          % Initialize Wave Class and Specify Type                                 
@@ -28,6 +59,8 @@ waves.period = 8;                       % Wave Period [s]
 % waves.height = 2.5;                       % Significant Wave Height [m]
 % waves.period = 8;                         % Peak Period [s]
 % waves.spectrumType = 'PM';                % Specify Wave Spectrum Type
+
+
 
 % % Irregular Waves using JS Spectrum with Equal Energy and Seeded Phase
 % waves = waveClass('irregular');           % Initialize Wave Class and Specify Type
@@ -52,6 +85,8 @@ waves.period = 8;                       % Wave Period [s]
 % % Waves with imported wave elevation time-history  
 % waves = waveClass('elevationImport');          % Create the Wave Variable and Specify Type
 % waves.elevationFile = 'elevationData.mat';     % Name of User-Defined Time-Series File [:,2] = [time, eta]
+
+waves.marker.location = [0,0];
 
 %% Body Data
 % Float
