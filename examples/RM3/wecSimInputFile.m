@@ -4,8 +4,8 @@ simu.simMechanicsFile = 'RM3.slx';      % Specify Simulink Model File
 simu.mode = 'normal';                   % Specify Simulation Mode ('normal','accelerator','rapid-accelerator')
 simu.explorer = 'on';                   % Turn SimMechanics Explorer (on/off)
 simu.startTime = 0;                     % Simulation Start Time [s]
-simu.rampTime = 100;                    % Wave Ramp Time [s]
-simu.endTime = 400;                     % Simulation End Time [s]
+simu.rampTime = 10;                    % Wave Ramp Time [s]
+simu.endTime = 40;                     % Simulation End Time [s]
 simu.solver = 'ode4';                   % simu.solver = 'ode4' for fixed step & simu.solver = 'ode45' for variable step 
 simu.dt = 0.1; 							% Simulation time-step [s]
 
@@ -16,7 +16,7 @@ bemFreq = 0.02:0.02:5.2;
 bemWaterDepth = 100;
 
 % % % noWaveCIC, no waves with radiation CIC  
-% % waves = waveClass('noWaveCIC');       % Initialize Wave Class and Specify Type  
+waves = waveClass('noWaveCIC');       % Initialize Wave Class and Specify Type  
 % 
 % % Regular Waves  
 waves1 = waveClass('regular');           % Initialize Wave Class and Specify Type                                 
@@ -27,25 +27,45 @@ waveGen(waves1,simu,bemFreq,bemWaterDepth)
 w1 = waves1.waveAmpTime;
 
 
-waves2 = waveClass('irregular');           % Initialize Wave Class and Specify Type                                 
-waves2.height = 1;                     % Wave Height [m]
-waves2.period = 2;                       % Wave Period [s]
-waves2.spectrumType = 'PM';
+waves2 = waveClass('regular');           % Initialize Wave Class and Specify Type                                 
+waves2.height = 3;                     % Wave Height [m]
+waves2.period = 4;                       % Wave Period [s]
+% waves2.spectrumType = 'PM';
 
 
 waveGen(waves2,simu,bemFreq,bemWaterDepth) 
 w2 = waves2.waveAmpTime;
 
-SwellandChop(:,1) = w1(:,1); SwellandChop(:,2) = w1(:,2) + w2(:,2);
+
+waves3 = waveClass('regular');           % Initialize Wave Class and Specify Type                                 
+waves3.height = 1;                     % Wave Height [m]
+waves3.period = 8;                       % Wave Period [s]
+% waves3.spectrumType = 'PM';
+
+
+waveGen(waves3,simu,bemFreq,bemWaterDepth) 
+w3 = waves3.waveAmpTime;
+
+waves4 = waveClass('regular');           % Initialize Wave Class and Specify Type                                 
+waves4.height = 1;                     % Wave Height [m]
+waves4.period = 16;                       % Wave Period [s]
+% waves4.spectrumType = 'PM';
+
+
+waveGen(waves4,simu,bemFreq,bemWaterDepth) 
+w4 = waves4.waveAmpTime;
+
+waveGroup = [waves1;waves2;waves3;waves4];
+SwellandChop(:,1) = w1(:,1); 
+SwellandChop(:,2) = w1(:,2) + w2(:,2) + w3(:,2) + w4(:,2);
 
 save('SwellandChop.mat','SwellandChop')
-clear('SwellandChop',"w1","w2")
 
-waves = waveClass('spectrumImport');           % Initialize Wave Class and Specify Type                                 
-waves.spectrumFile ='SwellandChop.mat';
-load(waves.spectrumFile);
-
-waveElevUser(waves,simu.rampTime,length(simu.time)-1,SwellandChop,simu.time)
+% 
+% waves = waveClass('spectrumImport');           % Initialize Wave Class and Specify Type                                 
+% waves.spectrumFile ='SwellandChop.mat';
+% load(waves.spectrumFile);
+% waveElevUser(waves,simu.rampTime,length(simu.time)-1,SwellandChop,simu.time)
 
 
 
@@ -86,7 +106,6 @@ waveElevUser(waves,simu.rampTime,length(simu.time)-1,SwellandChop,simu.time)
 % waves = waveClass('elevationImport');          % Create the Wave Variable and Specify Type
 % waves.elevationFile = 'elevationData.mat';     % Name of User-Defined Time-Series File [:,2] = [time, eta]
 
-waves.marker.location = [0,0];
 
 %% Body Data
 % Float
