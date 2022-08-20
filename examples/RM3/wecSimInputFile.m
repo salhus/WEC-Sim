@@ -5,7 +5,7 @@ simu.mode = 'normal';                   % Specify Simulation Mode ('normal','acc
 simu.explorer = 'on';                   % Turn SimMechanics Explorer (on/off)
 simu.startTime = 0;                     % Simulation Start Time [s]
 simu.rampTime = 10;                    % Wave Ramp Time [s]
-simu.endTime = 40;                     % Simulation End Time [s]
+simu.endTime = 500;                     % Simulation End Time [s]
 simu.solver = 'ode4';                   % simu.solver = 'ode4' for fixed step & simu.solver = 'ode45' for variable step 
 simu.dt = 0.1; 							% Simulation time-step [s]
 
@@ -16,40 +16,42 @@ bemFreq = 0.02:0.02:5.2;
 bemWaterDepth = 100;
 
 % % % noWaveCIC, no waves with radiation CIC  
-waves = waveClass('noWaveCIC');       % Initialize Wave Class and Specify Type  
-% 
+waves = waveClass('irregular');       % Initialize Wave Class and Specify Type  
+waves.height = 0.0;                     % Wave Height [m]
+waves.period = 3; 
+waves.spectrumType = 'PM';
 % % Regular Waves  
-waves1 = waveClass('regular');           % Initialize Wave Class and Specify Type                                 
-waves1.height = 2.0;                     % Wave Height [m]
-waves1.period = 1;                       % Wave Period [s]
-
+waves1 = waveClass('irregular');           % Initialize Wave Class and Specify Type                                 
+waves1.height = 5.0;                     % Wave Height [m]
+waves1.period = 2;                       % Wave Period [s]
+waves1.spectrumType = 'PM';
 waveGen(waves1,simu,bemFreq,bemWaterDepth) 
 w1 = waves1.waveAmpTime;
 
 
-waves2 = waveClass('regular');           % Initialize Wave Class and Specify Type                                 
-waves2.height = 3;                     % Wave Height [m]
+waves2 = waveClass('irregular');           % Initialize Wave Class and Specify Type                                 
+waves2.height = 0.25;                     % Wave Height [m]
 waves2.period = 4;                       % Wave Period [s]
-% waves2.spectrumType = 'PM';
+waves2.spectrumType = 'PM';
 
 
 waveGen(waves2,simu,bemFreq,bemWaterDepth) 
 w2 = waves2.waveAmpTime;
 
 
-waves3 = waveClass('regular');           % Initialize Wave Class and Specify Type                                 
-waves3.height = 1;                     % Wave Height [m]
-waves3.period = 8;                       % Wave Period [s]
-% waves3.spectrumType = 'PM';
+waves3 = waveClass('irregular');           % Initialize Wave Class and Specify Type                                 
+waves3.height = .75;                     % Wave Height [m]
+waves3.period = 2;                       % Wave Period [s]
+waves3.spectrumType = 'PM';
 
 
 waveGen(waves3,simu,bemFreq,bemWaterDepth) 
 w3 = waves3.waveAmpTime;
 
-waves4 = waveClass('regular');           % Initialize Wave Class and Specify Type                                 
-waves4.height = 1;                     % Wave Height [m]
-waves4.period = 16;                       % Wave Period [s]
-% waves4.spectrumType = 'PM';
+waves4 = waveClass('irregular');           % Initialize Wave Class and Specify Type                                 
+waves4.height = 2;                     % Wave Height [m]
+waves4.period = 5;                       % Wave Period [s]
+waves4.spectrumType = 'PM';
 
 
 waveGen(waves4,simu,bemFreq,bemWaterDepth) 
