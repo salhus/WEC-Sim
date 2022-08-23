@@ -3,7 +3,7 @@
 %Plot waves
 waves.plotElevation(simu.rampTime);
 try 
-    waves.plotSpectrum();
+    waves1.plotSpectrum();
 catch
 end
 
