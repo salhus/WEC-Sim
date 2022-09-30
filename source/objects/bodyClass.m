@@ -302,8 +302,8 @@ classdef bodyClass<handle
                     obj.irrExcitation(w,bemCount,direction,rho,g);
                     obj.irfInfAddedMassAndDamping(cicTime,stateSpace,rho,B2B);
                 case {'elevationImport'}
-                    obj.hydroForce.userDefinedFe = zeros(length(waveAmpTime(:,2)),obj.dof);   %initializing userDefinedFe for non imported wave cases
-                    obj.userDefinedExcitation(waveAmpTime,dt,direction,rho,g);
+%                     obj.hydroForce.userDefinedFe = zeros(length(waveAmpTime(:,2)),obj.dof);   %initializing userDefinedFe for non imported wave cases
+                    obj.userDefinedExcitation(obj,waveAmpTime,dt,direction,rho,g);
                     obj.irfInfAddedMassAndDamping(cicTime,stateSpace,rho,B2B);
             end
             if (obj.gbmDOF>0)
@@ -525,8 +525,8 @@ classdef bodyClass<handle
                     obj.hydroForce.fExt.re=zeros(nDOF,length(direction),length(w));
                     obj.hydroForce.fExt.im=zeros(nDOF,length(direction),length(w));
                     obj.hydroForce.fExt.md=zeros(nDOF,length(direction),length(w));
-                    [X,Y] = meshgrid(obj.hydroData.simulation_parameters.w, obj.hydroData.simulation_parameters.direction);
-                    ww     = reshape((repmat(w,length(direction),1)),[1,length(direction),length(w)]);
+                    [X,Y]    = meshgrid(obj.hydroData.simulation_parameters.w, obj.hydroData.simulation_parameters.direction);
+                    ww       = reshape((repmat(w,length(direction),1)),[1,length(direction),length(w)]);
                     dir0     = ((repmat(direction,length(w),1)))';
                     dir      =  reshape(dir0,[1,length(direction),length(w)]);
                     obj.hydroForce.fExt.re(ii,:,:) = interp2(X, Y, squeeze(re(ii,:,:)), ww, dir);
@@ -623,16 +623,24 @@ classdef bodyClass<handle
             t =  min(kt):dt:max(kt);
             for ii = 1:nDOF
                 if length(obj.hydroData.simulation_parameters.direction) > 1
+                    headings = obj.hydroData.simulation_parameters.direction;
                     [X,Y] = meshgrid(kt, obj.hydroData.simulation_parameters.direction);
-                    kernel = squeeze(kf(ii,:,:));
-                    obj.excitationIRF = interp2(X, Y, kernel, t, direction);
+                    ktt     = reshape((repmat(t,length(headings),1)),[1,length(headings),length(t)]);
+                    dir0     = ((repmat(headings,length(t),1)))';
+                    dir      =  reshape(dir0,[1,length(headings),length(t)]);
+                    obj.excitationIRF(ii,:,:) = interp2(X, Y, squeeze(kf(ii,:,:)), ktt, dir);
+
                 elseif obj.hydroData.simulation_parameters.direction == direction
                     kernel = squeeze(kf(ii,1,:));
                     obj.excitationIRF = interp1(kt,kernel,min(kt):dt:max(kt));
                 else
                     error('Default wave direction different from hydro database value. Wave direction (waves.direction) should be specified on input file.')
                 end
-                obj.hydroForce.userDefinedFe(:,ii) = conv(waveAmpTime(:,2),obj.excitationIRF,'same')*dt;
+
+                for kk = 1:length(headings)
+                obj.hydroForce.userDefinedFe(ii,kk,:) = conv(waveAmpTime(:,2),squeeze(obj.excitationIRF(ii,kk,:)),'same')*dt;
+                obj.hydroForce.sal(ii,kk,:)           = conv(waveAmpTime(:,2),squeeze(obj.excitationIRF(ii,kk,:)),'same')*dt;
+                end
             end
             obj.hydroForce.fExt.re=zeros(1,nDOF);
             obj.hydroForce.fExt.im=zeros(1,nDOF);
