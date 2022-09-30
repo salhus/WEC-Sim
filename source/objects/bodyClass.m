@@ -652,14 +652,16 @@ classdef bodyClass<handle
                     end
                 otherwise
                     nDOF = obj.dof;
-                    obj.hydroForce.fAddedMass = zeros(nDOF,nDOF);
-                    obj.hydroForce.fDamping = zeros(nDOF,nDOF);
-                    obj.hydroForce.totDOF  =zeros(nDOF,nDOF);
+                    Freq= obj.hydroData.simulation_parameters.w;
+                    nFreq=length(Freq);
+                    obj.hydroForce.fAddedMass = zeros(nDOF,nDOF,nFreq);
+                    obj.hydroForce.fDamping = zeros(nDOF,nDOF,nFreq);
+                    obj.hydroForce.totDOF  =zeros(nDOF,nDOF,nFreq);
                     for ii=1:nDOF
                         for jj=1:nDOF
                             jjj = obj.dofStart-1+jj;
-                            obj.hydroForce.fAddedMass(ii,jj) = interp1(obj.hydroData.simulation_parameters.w,squeeze(am(ii,jjj,:)),w,'spline');
-                            obj.hydroForce.fDamping(ii,jj) = interp1(obj.hydroData.simulation_parameters.w,squeeze(rd(ii,jjj,:)),w,'spline');
+                            obj.hydroForce.fAddedMass(ii,jj,:) = interp1(obj.hydroData.simulation_parameters.w,squeeze(am(ii,jjj,:)),w,'spline');
+                            obj.hydroForce.fDamping(ii,jj,:) = interp1(obj.hydroData.simulation_parameters.w,squeeze(rd(ii,jjj,:)),w,'spline');
                         end
                     end
             end
