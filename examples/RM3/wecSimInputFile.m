@@ -61,6 +61,8 @@ waveGroup = [waves1;waves2;waves3;waves4];
 SwellandChop(:,1) = w1(:,1); 
 SwellandChop(:,2) = w1(:,2) + w2(:,2) + w3(:,2) + w4(:,2);
 
+
+
 save('SwellandChop.mat','SwellandChop')
 
 % 
@@ -126,6 +128,8 @@ body(2).geometryFile = 'geometry/plate.stl';
 body(2).mass = 'equilibrium';                   
 body(2).inertia = [94419614.57 94407091.24 28542224.82];
 
+
+
 %% PTO and Constraint Parameters
 % Floating (3DOF) Joint
 constraint(1) = constraintClass('Constraint1'); % Initialize Constraint Class for Constraint1
@@ -136,3 +140,8 @@ pto(1) = ptoClass('PTO1');                      % Initialize PTO Class for PTO1
 pto(1).stiffness = 0;                           % PTO Stiffness [N/m]
 pto(1).damping = 1200000;                       % PTO Damping [N/(m/s)]
 pto(1).location = [0 0 0];                      % PTO Location [m]
+
+%%
+% run('initializeWecSim2.m');
+% userDefinedExcitation(body(1),SwellandChop,0.01,0,1000,10)
+% userDefinedExcitation(body(2),SwellandChop,0.01,0,1000,10)
