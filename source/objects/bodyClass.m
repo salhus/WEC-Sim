@@ -522,10 +522,16 @@ classdef bodyClass<handle
             obj.hydroForce.fExt.md=zeros(1,nDOF);
             for ii=1:nDOF
                 if length(obj.hydroData.simulation_parameters.direction) > 1
+                    obj.hydroForce.fExt.re=zeros(nDOF,length(direction),length(w));
+                    obj.hydroForce.fExt.im=zeros(nDOF,length(direction),length(w));
+                    obj.hydroForce.fExt.md=zeros(nDOF,length(direction),length(w));
                     [X,Y] = meshgrid(obj.hydroData.simulation_parameters.w, obj.hydroData.simulation_parameters.direction);
-                    obj.hydroForce.fExt.re(ii) = interp2(X, Y, squeeze(re(ii,:,:)), w, direction);
-                    obj.hydroForce.fExt.im(ii) = interp2(X, Y, squeeze(im(ii,:,:)), w, direction);
-                    obj.hydroForce.fExt.md(ii) = interp2(X, Y, squeeze(md(ii,:,:)), w, direction);
+                    ww     = reshape((repmat(w,length(direction),1)),[1,length(direction),length(w)]);
+                    dir0     = ((repmat(direction,length(w),1)))';
+                    dir      =  reshape(dir0,[1,length(direction),length(w)]);
+                    obj.hydroForce.fExt.re(ii,:,:) = interp2(X, Y, squeeze(re(ii,:,:)), ww, dir);
+                    obj.hydroForce.fExt.im(ii,:,:) = interp2(X, Y, squeeze(im(ii,:,:)), ww, dir);
+                    obj.hydroForce.fExt.md(ii,:,:) = interp2(X, Y, squeeze(md(ii,:,:)), ww, dir);
                 elseif obj.hydroData.simulation_parameters.direction == direction
                     obj.hydroForce.fExt.re(ii) = interp1(obj.hydroData.simulation_parameters.w,squeeze(re(ii,1,:)),w,'spline');
                     obj.hydroForce.fExt.im(ii) = interp1(obj.hydroData.simulation_parameters.w,squeeze(im(ii,1,:)),w,'spline');
