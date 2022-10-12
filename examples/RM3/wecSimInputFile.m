@@ -5,10 +5,10 @@ simu.mode = 'normal';                   % Specify Simulation Mode ('normal','acc
 simu.explorer = 'on';                   % Turn SimMechanics Explorer (on/off)
 simu.startTime = 0;                     % Simulation Start Time [s]
 simu.rampTime = 10;                    % Wave Ramp Time [s]
-simu.endTime = 500;                     % Simulation End Time [s]
+simu.endTime = 50;                     % Simulation End Time [s]
 simu.solver = 'ode4';                   % simu.solver = 'ode4' for fixed step & simu.solver = 'ode45' for variable step 
-simu.dt = 0.01; 							% Simulation time-step [s]
-
+simu.dt = 0.1; 							% Simulation time-step [s]
+simu.cicEndTime = 20;
 %% Wave Information
 bemFreq = 0.02:0.02:5.2;
 bemWaterDepth = 100;
@@ -20,15 +20,16 @@ waves.period = 3;
 waves.spectrumType = 'PM';
 waves.direction = 90;
 waves.spread = 1;
+waveGen(waves,simu,bemFreq,bemWaterDepth) 
 % 
-% marker = 50;
-% distance = 20;
-% [X,Y] = meshgrid(-marker:distance:marker,-marker:distance:marker);
-% waves.marker.location = [reshape(X,[],1),reshape(Y,[],1)]; % Marker Locations [X,Y]
-% clear('marker','distance','X','Y')
-% waves.marker.style = 3; % 1: Sphere, 2: Cube, 3: Frame.
-% waves.marker.size = 15; % Marker Size in Pixels
-
+marker = 1;
+distance = 20;
+[X,Y] = meshgrid(-marker:distance:marker,-marker:distance:marker);
+waves.marker.location = [reshape(X,[],1),reshape(Y,[],1)]; % Marker Locations [X,Y]
+clear('marker','distance','X','Y')
+waves.marker.style = 3; % 1: Sphere, 2: Cube, 3: Frame.
+waves.marker.size = 15; % Marker Size in Pixels
+waves.marker.graphicColor = [1,1,1];
 
 % % Regular Waves  
 waves1 = waveClass('irregular');           % Initialize Wave Class and Specify Type                                 
@@ -38,13 +39,14 @@ waves1.spectrumType = 'PM';
 waves1.direction = 90;
 waves1.spread = 1;
 % 
-% marker = 75;
-% distance = 10;
-% [X,Y] = meshgrid(-marker:distance:marker,-marker:distance:marker);
-% waves1.marker.location = [reshape(X,[],1),reshape(Y,[],1)]; % Marker Locations [X,Y]
-% clear('marker','distance','X','Y')
-% waves1.marker.style = 2; % 1: Sphere, 2: Cube, 3: Frame.
-% waves1.marker.size = 20; % Marker Size in Pixels
+marker = 75;
+distance = 10;
+[X,Y] = meshgrid(-marker:distance:marker,-marker:distance:marker);
+waves1.marker.location = [reshape(X,[],1),reshape(Y,[],1)]; % Marker Locations [X,Y]
+clear('marker','distance','X','Y')
+waves1.marker.style = 2; % 1: Sphere, 2: Cube, 3: Frame.
+waves1.marker.size = 20; % Marker Size in Pixels
+waves1.marker.graphicColor = [0.1,0.2,0.9];
 waveGen(waves1,simu,bemFreq,bemWaterDepth) 
 w1 = waves1.waveAmpTime;
 
@@ -56,13 +58,14 @@ waves2.spectrumType = 'PM';
 waves2.direction = 0;
 waves2.spread = 1;
 
-% marker = 50;
-% distance = 20;
-% [X,Y] = meshgrid(-marker:distance:marker,-marker:distance:marker);
-% waves2.marker.location = [reshape(X,[],1),reshape(Y,[],1)]; % Marker Locations [X,Y]
-% clear('marker','distance','X','Y')
-% waves2.marker.style = 1; % 1: Sphere, 2: Cube, 3: Frame.
-% waves2.marker.size = 30; % Marker Size in Pixels
+marker = 50;
+distance = 20;
+[X,Y] = meshgrid(-marker:distance:marker,-marker:distance:marker);
+waves2.marker.location = [reshape(X,[],1),reshape(Y,[],1)]; % Marker Locations [X,Y]
+clear('marker','distance','X','Y')
+waves2.marker.style = 1; % 1: Sphere, 2: Cube, 3: Frame.
+waves2.marker.size = 30; % Marker Size in Pixels
+waves2.marker.graphicColor = [0.9,0.2,0.1];
 waveGen(waves2,simu,bemFreq,bemWaterDepth) 
 w2 = waves2.waveAmpTime;
 
